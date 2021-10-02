@@ -1,95 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8"/>
-        <meta name="robots" content="index,follow">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="Title" content="Jgalvan Design" />
-        <meta name="Author" content="Jesus Galvan Gonzalez" />
-        <meta name="description" lang="es" content="Jgalvan Design es un portfolio, site personal y un perfil universal de Jesus Galvan Gonzalez" />
-        <meta name="Publisher" content="Jesus Galvan Gonzalez" />
-		<meta name="Robots" content="All" />
-        <link rel="shortcut icon" href="./assets/icons/icono_logo.ico" type="image/x-icon">
-        <title>JGD Project - Juego Zorro Feroz</title>
-        <!-- Fonts Reference -->
-        <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;600;900&display=swap" rel="stylesheet">
-        <!-- Style Reference-->
-        <link rel="stylesheet" href="./css/style.css">
-        <link rel="stylesheet" href="./css/tablet.css" media="(min-width: 750px)">
-        <link rel="stylesheet" href="./css/desktop.css" media="(min-width: 1024px)">
+        <title>Zorro Feroz</title>
+        <link rel="stylesheet" href="./css/styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
     </head>
     <body>
-        <header>
-            <div class="header__logo">
-                <img src="./assets/img/logo_icon.svg" alt="Icono del logo Jgalvan Design" title="Icono del logo Jgalvan Design">
-                <h2>Jgalvan Design Project</h2>
-            </div>
-            <nav class="header__menu">
-                <div class="menu__container">
-                    <ul class="menu__container--list">
-                        <li><a href="https://www.jgalvandesign.com/">Volver a web</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <main>
-            <section class="main__hero" style="display: block;" id="home">
-                <h1 class="hero__title">Juego del Zorro Feroz</h1>
-                <p class="hero__description">
-                    Bienvenido a este pequeño proyecto el cual está realizado con unas pocas líneas de código en HTML5 y Javascript.<br>
-                    El juego es bastante sencillo e infantil pero es un proyecto que me ha gustado mucho realizar ya que lo hice para mi hijo de 5 años.<br>
-                    El juego se trata de llegar a la posición del pollo moviendo el zorrito con las flechas del teclado.<br>
-                    También es posible jugar desde una tablet o móvil ya que reconoce el touch, solo desliza el dedo en la dirección que deseas mover el zorrito.
-                </p>
-            </section>
-            <section class="main__juego" id="juego">
-                <div class="juego__container">
-                    <button id="btnEmpezar" class="btn-start" >Empezar a jugar!</button>
-                    <button id="btnStop" class="btn-stop hide" >Pausar</button>
-                    <canvas id="villaplatzi"></canvas>
-                </div>
-            </section>
-            <section class="main__contact">
-                <h2 class="contact__title">Quick Contact</h2>
-                <p class="contact_description">Si quieres aportar información, si quieres colaborar conmigo, que yo colabore contigo en tu proyecto o simplemente deseas contratarme para que trabaje en tu emrpesa, no dudes en ponerte en contacto conmigo, yo soy tu hombre!! (Si, lo sé suena un poco mal) .</p>
-                <form method="post" action="" id="quick_contact" class="contact__form">
-                    <p>Nombre: <br>
-                        <input class="contact__form--email" type="text" name="name_contact" id="name_contact" placeholder="Nombre" required><br>
-                        <p>Deja tu Email: <br>
-                        <input class="contact__form--email" type="email" name="email_contact" id="email_contact" placeholder="Email" required><br>
-                        <p>Deja tu comentario: <br>
-                        <input class="contact__form--email" type="text" name="mensaje_contact" id="mensaje_contact" placeholder="Comentario" required><br>
-                        <input class="contact__form--buttom" type="submit" name="enviar" id="send_contact" value="Enviar">
-                    </p>
-                </form>
-            </section>
-            <section class="main__network">
-                <h2 class="network__title">Networks</h2>
-                <div class="network__icons-container">
-                    <ul class="network__list">
-                        <li><a href="https://github.com/Jgalvan7" target="_blank"><img src="./assets/icons/github.svg" alt="Icono de la red Github" title="Icono de red Github"></a></li>
-                        <li><a href="https://www.facebook.com/jgalvan07/" target="_blank"><img src="./assets/icons/facebook.svg" alt="Icono de Facebook" title="Icono de Facebook"></a></li>
-                        <li><a href="https://www.instagram.com/jgalvan.7/" target="_blank"><img src="./assets/icons/instagram.svg" alt="Icono de Instagram" title="Icono de Instagram"></a></li>
-                        <li><a href="https://www.linkedin.com/in/jesus-galvan-93378a23/" target="_blank"><img src="./assets/icons/linkedin.svg" alt="Icono de Linkedin" title="Icono de Linkedin"></a></li>
-                        <li><a href="https://twitter.com/JesusGalvanGonz" target="_blank"><img src="./assets/icons/twitter.svg" alt="Icono de Twitter" title="Icono de Twitter"></a></li>
-                        <li><a href="https://www.twitch.tv/jgalvan_7" target="_blank"><img src="./assets/icons/twitch.svg" alt="Iconod e Twitch" title="Icono de Twitch"></a></li>
-                    </ul>
-                </div>
-            </section>
-            <section class="main__project">
-                <h2 class="project__title">Otros Proyectos</h2>
-                <div class="priject__container">
-                    <ul class="project__container--list">
-                        <li><a href="">Pizarra Digital</a></li>
-                        <li><a href="">Generator de Tokens</a></li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-        <footer>
-            <p>Jgalvan Design &copy 2021</p>
-        </footer>
-        <!-- Script Reference-->
-        <script src="js/script.js"></script>
+        <section class="moduloZorroFeroz" id="game"></section>
+        <script src="./js/script.js"></script>
     </body>
 </html>

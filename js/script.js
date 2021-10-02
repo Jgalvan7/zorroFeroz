@@ -1,428 +1,385 @@
-var teclas = {UP: 38, DOWN: 40, LEFT: 37, RIGHT: 39}; // Asignamos nombre a los valores numericos de las teclas
-var villa = document.getElementById("villaplatzi"); // Accedemsoa l canvas mediante su ID
-var lienzo = villa.getContext("2d"); // Definimos el tipo de contexto
-var ancho = document.body.offsetWidth; // Capturamos el ancho de la pantalla para cargar una imagenes u otras
-
-/**
- * En este condicional establecemos el ancho del canvas en funcion del ancho que tenga la pantalla y cargamos
- * las imagenesen funcion de ese ancho tambien.
- */
-if (ancho < 500){
-    villa.width = 320;
-    villa.height = 320;
-    var anchoAnimal = 45;
-    var fondo = { url: "./assets/img/tile320.png", cargaOK: false }
-    var vaca = { url: "./assets/img/vaca320.png", cargaOK: false }
-    var pollo = { url: "./assets/img/pollo320.png", cargaOK: false }
-    var cerdo = { url: "./assets/img/cerdo320.png", cargaOK: false }
-    var zorro = { url: "./assets/img/zorro320.png", cargaOK: false }
-} else {
-    villa.width = 500;
-    villa.height = 500;
-    var anchoAnimal = 70;
-    var fondo = { url: "./assets/img/tile.png", cargaOK: false }
-    var vaca = { url: "./assets/img/vaca2.png", cargaOK: false }
-    var pollo = { url: "./assets/img/pollo3.png", cargaOK: false }
-    var cerdo = { url: "./assets/img/cerdo3.png", cargaOK: false }
-    var zorro = { url: "./assets/img/zorro.png", cargaOK: false }
-}
-
-/**
- * Declaramos las variables que utilizaremos a lo largo del codigo
- */
-var estado = "inicial";
-var nivel;
-var aleatorioVacas, aleatorioCerdos, animales;
-var xStart, xEnd, yStart, yEnd, walking;
-var granja = [];
-var ganado = [];
-var piara = [];
-
-/**
- * Creamos las instancias del objeto imagen, le pasamos la url al src y añadimos el evento load.
- * En cuanto este listo dispara la funcion para cargar las imagenes
- */
-fondo.objeto = new Image();
-fondo.objeto.src = fondo.url;
-fondo.objeto.addEventListener("load", cargarFondo);
-
-vaca.objeto = new Image();
-vaca.objeto.src = vaca.url;
-vaca.objeto.addEventListener("load", cargarVacas);
-
-pollo.objeto = new Image();
-pollo.objeto.src = pollo.url;
-pollo.objeto.addEventListener("load", cargarPollo);
-
-cerdo.objeto = new Image();
-cerdo.objeto.src = cerdo.url;
-cerdo.objeto.addEventListener("load", cargarCerdos);
-
-zorro.objeto = new Image();
-zorro.objeto.src = zorro.url;
-zorro.objeto.addEventListener("load", cargarZorro);
-document.addEventListener("keyup", moverZorro);
-
-/**
- * Este bloque de codigo va en relacion al anterior, estas son las funciones que cargan las imaganes dentro
- * del canvas una en cuanto esten listas.
- */
-function cargarFondo() {
-    fondo.cargaOK = true;
-    cargar();
-}
-function cargarVacas() {
-    vaca.cargaOK = true;
-    cargar();
-}
-function cargarPollo() {
-    pollo.cargaOK = true;
-    cargar();
-}
-function cargarCerdos() {
-    cerdo.cargaOK = true;
-    cargar();
-}
-function cargarZorro() {
-    zorro.cargaOK = true;
-    cargar();
-}
-
-/**
- * Esta funcion es la encargada de pintar todas las imaganes.
- * El condicional switch lo usamos para definir el estado del juego.
- */
-function cargar() {
-    switch (estado) {
-        /**
-         * En su estado inicial el codigo crea un numero aleatorio de vacas y cerdos, en la variable animales guardamos
-         * los valores aleatorios de vacas, cerdos y le sumamos dos ya que contamos tambien al pollo y al zorro.
-         * Con el ciclo for rellenamos el array granja con las posiciones que tendran los animales en el tablero.
-         * Para que no coincida a la vez que vamos creando posiciones comprobamos que esas coordenadas no enten en el
-         * array ya indroducidas de ser asi las borramos y restamos una posicion a la iteracion para que cree nuevamente otra
-         * coordenada.
-         * Por ultimo cambiamos la variable estado a jugando, para que no entre al switch mientras el juego esta activo, a no
-         * ser que topes con un cerdo, vaca o atrapes al pollo, en cuyo caso el estado cambiaria.
-         */
-        case "inicial":
-            nivel = 0;
-            aleatorioVacas = aleatorio(1, 10);
-            aleatorioCerdos = aleatorio(1, 10);
-            animales = aleatorioVacas + aleatorioCerdos + 2;
-            for (v = 0; v < animales; v++) {
-                var x = aleatorio(0, 6);
-                var y = aleatorio(0, 6);
-                granja[v] = [x, y];
-                for(g in granja) {
-                    if(v != g) {
-                        if(granja[v][0] == granja[g][0] && granja[v][1] == granja[g][1]) {
-                            granja.pop();
-                            v--;
-                        }
-                    }
-                }
-            }
-            estado = "jugando";
-            break;
-        /**
-         * Una vez atrapas al pollo el estado del juego cambia a "win".
-         * En esta parte del codigo lo primero que hacemos es vacias las array de la granja donde estaban todas las
-         * coordenadas y las arrays del ganado donde estaban las coordenadas de todas las vacas y la de piara donde
-         * se encontraban las coordenadas de los cerdos.
-         * Como el juego continua subamos un nivel al juego lo que aumenta en 1 el numero de vacas y cerdos que
-         * apareceran.
-         * Volvemos a cargar la variable animales para rellenar nuevamente nuestra granaja de animales y cambiamos
-         * nuevamente la variable estado a juagndo.
-         */
-        case "win":
-            borrarArray(granja);
-            borrarArray(ganado);
-            borrarArray(piara);
-            nivel++;
-            aleatorioVacas = aleatorio(1, 10);
-            aleatorioCerdos = aleatorio(1, 10);
-            aleatorioVacas = aleatorioVacas + nivel;
-            aleatorioCerdos = aleatorioCerdos + nivel;
-            animales = aleatorioVacas + aleatorioCerdos + 2;
-            for (v = 0; v < animales; v++) {
-                var x = aleatorio(0, 6);
-                var y = aleatorio(0, 6);
-                granja[v] = [x, y];
-                for(g in granja) {
-                    if(v != g) {
-                        if(granja[v][0] == granja[g][0] && granja[v][1] == granja[g][1]) {
-                            granja.pop();
-                            v--;
-                        }
-                    }
-                }
-            }
-            estado = "jugando";
-            break;
-        /**
-         * En el estado lose se entra cuando topas con una vaca o con un cerdo.
-         * En cuyo caso vaciamos las arrays como en el caso anterior, reinicializamos el nivel y cambiamos la
-         * variable estado.
-         */
-        case "lose":
-            borrarArray(granja);
-            borrarArray(ganado);
-            borrarArray(piara);
-            nivel = 0;
-            aleatorioVacas = aleatorio(1, 10);
-            aleatorioCerdos = aleatorio(1, 10);
-            aleatorioVacas = aleatorioVacas + nivel;
-            aleatorioCerdos = aleatorioCerdos + nivel;
-            animales = aleatorioVacas + aleatorioCerdos + 2;
-            for (v = 0; v < animales; v++) {
-                var x = aleatorio(0, 6);
-                var y = aleatorio(0, 6);
-                granja[v] = [x, y];
-                for(g in granja) {
-                    if(v != g) {
-                        if(granja[v][0] == granja[g][0] && granja[v][1] == granja[g][1]) {
-                            granja.pop();
-                            v--;
-                        }
-                    }
-                }
-            }
-            estado = "jugando";
-            break;
-    }
-    /**
-     * Una vez tenemos todas las coordenadas pasamos a cargar nuestro juego con las imagenes.
-     * Primero el fondo y sobre este pintaremos el resto de animales
-     * Las coordenadas en la posicion 0 y 1 del array granja son para el pollo y el zorro respectivamente.
-     * Por lo que a la hora de pintar las vacas y los cerdos nos saltaremos estas dos coordenadas
-     * Al cargar las vacas y los cerdos rellenamos el array de ganado y piara respectivamente para que cuando
-     * movamos al zorro sepamos donde estaban ubicadas las vacas y los cerdos.
-     */
-    if (fondo.cargaOK) {
-        lienzo.drawImage(fondo.objeto, 0, 0);
-    }
-    if (vaca.cargaOK) {
-        for (v = 0; v < aleatorioVacas; v++) {
-            var x = v + 2;
-            vaca.x = granja[x][0] * anchoAnimal;
-            vaca.y = granja[x][1] * anchoAnimal;
-            var vaquita = [vaca.x,vaca.y];
-            ganado[v] = vaquita;
-            lienzo.drawImage(vaca.objeto, vaca.x, vaca.y);
-        }
-    }
-    if (cerdo.cargaOK) {
-        for (c = 0; c < aleatorioCerdos; c++) {
-            var x = c + 2 + aleatorioVacas;
-            cerdo.x = granja[x][0] * anchoAnimal;
-            cerdo.y = granja[x][1] * anchoAnimal;
-            var cerdito = [cerdo.x,cerdo.y];
-            piara[c] = cerdito;
-            lienzo.drawImage(cerdo.objeto, cerdo.x, cerdo.y);
-        }
-    }
-    if (pollo.cargaOK) {
-        pollo.x = granja[0][0] * anchoAnimal;
-        pollo.y = granja[0][1] * anchoAnimal;
-        lienzo.drawImage(pollo.objeto, pollo.x, pollo.y);
-    }
-    if (zorro.cargaOK) {
-        zorro.x = granja[1][0] * anchoAnimal;
-        zorro.y = granja[1][1] * anchoAnimal;
-        lienzo.drawImage(zorro.objeto, zorro.x, zorro.y);
-    }
-}
-
-
-
-/**
- * Esta funcion establece el movimiento del zorro, dicho movimiento esta establecido segun el ancho de la pantalla.
- * Despues analiza la tecla que ha pulsado el usuario y en funcion de la que sea establece las coordenadas que se
- * le pasaran a la funcion caminar.
- * Aqui tambien establecemos que el el zorro llega a los bordes del mapa no pueda seguir avanzando y asi evitamos
- * que se salga del mapa.
- */
-function moverZorro(evento) {
-    var movimiento = anchoAnimal;
-    var x = zorro.x;
-    var y = zorro.y;
-    if(evento.keyCode == undefined){
-        evento = evento;
-    } else {
-        evento = evento.keyCode;
-    }
-    switch(evento) {
-        case teclas.UP:
-            if(zorro.y == 0){
-                zorro.y = zorro.y;
-            } else {
-                zorro.y = y - movimiento;
-            }
-            caminar(x, y, x, y - movimiento, lienzo);
-            break;
-        case teclas.DOWN:
-            if(zorro.y == 420 || zorro.y == 270){
-                zorro.y = zorro.y;
-            } else {
-                zorro.y = y + movimiento;
-            }
-            caminar(x, y, x, y + movimiento, lienzo);
-            break;
-        case teclas.LEFT:
-            if(zorro.x == 0){
-                zorro.x = zorro.x;
-            } else {
-                zorro.x = x - movimiento;
-            }
-            caminar(x, y, x- movimiento, y, lienzo);
-            break;
-        case teclas.RIGHT:
-            if(zorro.x == 420 || zorro.x == 270){
-                zorro.x = zorro.x;
-            } else {
-                zorro.x = x + movimiento;
-            }
-            caminar(x, y, x + movimiento, y, lienzo);
-            break;
-    }
-}
-
-/**
- * Este codigo monitoriza el evento touch cuando utilizamos un movil o tablet
- * Se recogen las coordenadas de inicio y fin con los eventos touchstart y touchend y las pasamos a la funcion moveTouch.
- * La funciona evalua las coordenadas del evento touch e indica ha donde tenemos que mover el zorro.
- */
-villa.addEventListener("touchstart", function(eventoInicio) {
-    xStart = eventoInicio.changedTouches[0].pageX;
-    yStart = eventoInicio.changedTouches[0].pageY;
+// Accedemos al section donde se cargará el juego y declaramos las variables de la imagen inicial y el botón jugar.
+const ModuleGame = document.getElementById("game");
+const ImageStart = "./assets/zorroFeroz.jpg";
+const BtnStart = "./assets/boton__play.png";
+const BtnStart2 = "./assets/boton__play2.png";
+// Creamos un elemento imagen y lo agregamos al módulo.
+const LaunchImg = document.createElement("img");
+LaunchImg.setAttribute("src",ImageStart);
+LaunchImg.setAttribute("id", "imgLaunch");
+ModuleGame.appendChild(LaunchImg);
+// Creamos un elemento botón y lo agregamos al módulo, este será el que abra el menú de juego.
+const LaunchBtn = document.createElement("button");
+LaunchBtn.setAttribute("class","moduloZorroFeroz__start");
+LaunchBtn.setAttribute("id", "btnStart");
+ModuleGame.appendChild(LaunchBtn);
+// Creamos un elemento que contendra la imagen del botón jugar que definimos antes.
+const LaunchBtnImg = document.createElement("img");
+LaunchBtnImg.setAttribute("src",BtnStart);
+LaunchBtn.appendChild(LaunchBtnImg);
+// Accedemos al botón mediante su ID y le asignamis un par de escuchas para darle interactividad.
+const BtnGame = document.getElementById("btnStart");
+BtnGame.addEventListener("mouseenter", function(){
+    LaunchBtnImg.setAttribute("src",BtnStart2);
 });
-villa.addEventListener("touchend", function(eventoFinal) {
-    xEnd = eventoFinal.changedTouches[0].pageX;
-    yEnd = eventoFinal.changedTouches[0].pageY;
-    moveTouch();
+BtnGame.addEventListener("mouseout", function(){
+    LaunchBtnImg.setAttribute("src",BtnStart);
 });
-function moveTouch() {
-    var direccionX = xStart - xEnd;
-    var direccionY = yStart - yEnd;
-    if(direccionX < 0){ direcX = -(direccionX); } else { direcX = direccionX; }
-    if(direccionY < 0){ direcY = -(direccionY); } else { direcY = direccionY; }
-    if(direcX > direcY ) {
-        if(direccionX < 0){
-            walking = teclas.RIGHT;
-            moverZorro(walking);
-        } else {
-            walking = teclas.LEFT;
-            moverZorro(walking);
-        }
-    } else {
-        if(direccionY < 0) {
-            walking = teclas.DOWN;
-            moverZorro(walking);
-        } else {
-            walking = teclas.UP;
-            moverZorro(walking);
-        }
-    }
+// Asignamos la escucha para el evento click.
+BtnGame.addEventListener("click", lauchStart);
+// Creamos la funcion que mostrará el menú del juego.
+function lauchStart() {
+    // Eliminamos el botón de jugar.
+    ModuleGame.removeChild(LaunchBtn);
+    // Creamos un elemento div que contendrá el menú del juego.
+    const GameMenu = document.createElement("div");
+    GameMenu.setAttribute("class", "moduloZorroFeroz__gameMenu");
+    ModuleGame.appendChild(GameMenu);
+    // Creamos el botón para iniciar el juego y le insertamos el texto "Nuevo Juego".
+    const BtnNewGame = document.createElement("button");
+    BtnNewGame.setAttribute("id", "btnNewGame");
+    GameMenu.appendChild(BtnNewGame);
+    const TextBtnNewGame = document.getElementById("btnNewGame");
+    TextBtnNewGame.innerText= "Nuevo Juego";
+    // Creamos el botón para salir del juego y le insertamos el texto "Salir del Juego".
+    const BtnExit = document.createElement("button");
+    BtnExit.setAttribute("id", "btnExit");
+    GameMenu.appendChild(BtnExit);
+    const TextBtnExit = document.getElementById("btnExit");
+    TextBtnExit.innerText= "Salir del Juego";
+    // Le damos la funcionalidad al botón Nuevo Juego mediante la escucha del evento click.
+    // Al darle al botón este eliminará el div que muestra el menú y la imagen principal.
+    TextBtnNewGame.addEventListener("click", function() {
+        ModuleGame.removeChild(GameMenu);
+        ModuleGame.removeChild(LaunchImg);
+        // Creamos un elemento imagen que será el fondo del juego y lo cargamos en pantalla con las dimensiones correspondientes.
+        const BaseGame = document.createElement("img");
+        BaseGame.setAttribute("class", "moduloZorroFeroz__game");
+        BaseGame.setAttribute("src", "./assets/farm.png");
+        BaseGame.setAttribute("width", "1000px");
+        BaseGame.setAttribute("height", "600px");
+        ModuleGame.appendChild(BaseGame);
+        // Cargamos la función que inicia la partida.
+        startGame();
+    });
+    // Le damos funcionalidad al botón Salir del Juego, el cual al darle click recargará la página.
+    TextBtnExit.addEventListener("click", _ => { location.reload() });
 }
-
-
-/**
- * Esta funcion pinta nuevamente a todo el tablero tal cual estaba y coloca al zorro en la nueva coordenada.
- * Por ultimo comprueba si la nueva posicion coincide con alguna coordenada de cualquier otro animal.
- * Si es el pollo lanza un alert de victoria, cambia la variable estado a win y ejecuta la funcion cargar.
- * Si es una vaca o un cerdo lanza un alert de derrota, cambia la variable estado a lose y ejecuta la funcion cargar.
- */
-function caminar(xi, yi, xf, yf, lienzo) {
-    lienzo.beginPath();
-    lienzo.moveTo(xi, yi);
-    lienzo.lineTo(xf, yf);
-    lienzo.stroke();
-    lienzo.closePath();
-    if (fondo.cargaOK) {
-        lienzo.drawImage(fondo.objeto, 0, 0);
+// Creamos la función que iniciará la partida.
+function startGame() {
+    // Creamos el canvas donde se desarrollará el juego y lo cargamos.
+    const GameZone = document.createElement("canvas");
+    GameZone.setAttribute("class", "moduloZorroFeroz__gameZone");
+    GameZone.setAttribute("id", "foxFoxy");
+    GameZone.setAttribute("width", "960px");
+    GameZone.setAttribute("height", "440px");
+    ModuleGame.appendChild(GameZone);
+    // Asignamos el canvas a una variable y le pasamos el contexto que tendrá el dibujo.
+    const Farm = document.getElementById("foxFoxy");
+    const FarmZone = Farm.getContext("2d");
+    // Inicializamos las variables que nos hacen falta para el juego y declaramos las teclas que se usarán para jugar, el estado inicial del juego y el ancho que tendrán los animales.
+    const Keys = {UP: 38, DOWN: 40, LEFT: 37, RIGHT: 39};
+    let aleatorioVacas, aleatorioCerdos, animales, nivel;
+    let xStart, xEnd, yStart, yEnd, walking;
+    let estado = "inicial";
+    const anchoAnimal = 70;
+    let Granja = [];
+    let Ganado = [];
+    let Piara = [];
+    // Declaramos las variables que contendrán las imágenes que usaremos para el juego.
+    let Base = { url: "./assets/farm.png", cargaOK: false }
+    let Fox = { url: "./assets/zorro.png", cargaOK: false };
+    let Chicken = { url: "./assets/pollo.png", cargaOK: false };
+    let Cow = { url: "./assets/vaca.png", cargaOK: false };
+    let Pig = { url: "./assets/cerdo.png", cargaOK: false };
+    // Creamos la instancia de las imáganes y las pasamos para su carga.
+    Base.objeto = new Image();
+    Base.objeto.src = Base.url;
+    Base.objeto.addEventListener("load", loadBase);
+    Fox.objeto = new Image();
+    Fox.objeto.src = Fox.url;
+    Fox.objeto.addEventListener("load", loadFox);
+    Chicken.objeto = new Image();
+    Chicken.objeto.src = Chicken.url;
+    Chicken.objeto.addEventListener("load", loadChicken);
+    Cow.objeto = new Image();
+    Cow.objeto.src = Cow.url;
+    Cow.objeto.addEventListener("load", loadCow);
+    Pig.objeto = new Image();
+    Pig.objeto.src = Pig.url;
+    Pig.objeto.addEventListener("load", loadPig);
+    // Cargamos las imágenes y llamamos a la funciona cargar que se encargará de crear la disposición que tendrán los animales en el tablero de juego.
+    function loadBase() {
+        Base.cargaOK = true;
+        cargar();
     }
-    if (vaca.cargaOK) {
-        for (positionVaca in ganado) {
-            vaca.x = ganado[positionVaca][0];
-            vaca.y = ganado[positionVaca][1];
-            lienzo.drawImage(vaca.objeto, vaca.x, vaca.y);
+    function loadFox() {
+        Fox.cargaOK = true;
+        cargar();
+    }
+    function loadChicken() {
+        Chicken.cargaOK = true;
+        cargar();
+    }
+    function loadCow() {
+        Cow.cargaOK = true;
+        cargar();
+    }
+    function loadPig() {
+        Pig.cargaOK = true;
+        cargar();
+    }
+    // Añadimos una escuhca al document para saber cuando se pulsa una tecla y pasamos el evento keyup a la función para saber si debemos mover el zorro o no.
+    document.addEventListener("keyup", moverZorro);
+    // cargamos la función que generará la posición de los animales de forma aleatoria y se encargará de dibujar los animales en el tablero.
+    function cargar () {
+        // Con este condicional determinamos en que punto de la partida nos encontramos para saber que debemos hacer con el juego.
+        switch (estado) {
+            // Este estado carga el primer mapa y genera los arrays que contendrán las posiciones.
+            case "inicial":
+                nivel = 0;
+                // Creamos un número aleatorio de vacas y se lo asignamos a una variable.
+                aleatorioVacas = aleatorio(1, 10);
+                // Creamos un número aleatorio de cerdos y se lo asignamos a una variable.
+                aleatorioCerdos = aleatorio(1, 10);
+                // Sumamos la cantidad total de animales que tendrá el tablero es decir, total de vacas y cerdos mas 2, que corresponden al zorro y al pollo.
+                animales = aleatorioVacas + aleatorioCerdos + 2;
+                // Con este cicllo rellemanos el array Granja que contendra toda las posiciones de los animales
+                for (let v = 0; v < animales; v++) {
+                    // Por cada iteración del ciclo se crea un número aleatorio para la posición X e Y. El rango para calcular el número aleatorio viene dado por la cantidad de animales que caben en el tablero.
+                    // Si el tablero es cuadrado el rango será igual para ambas coordenadas y el tablero es mas ancho que largo el rango de la coordenada X será mayor que el de la coordenada Y.
+                    // Para calcular los rangos simplemente se divide el ancho del tablero entre el ancho de la imagen de los animales y para el largo utilizaremos el alto del tablero y lo dividimos por el alto de la imagen de los animales.
+                    let x = aleatorio(0, 12);
+                    let y = aleatorio(0, 5);
+                    // una vez tenemos las coordenadas las pasamos guardamos en el array.
+                    Granja[v] = [x, y];
+                    // Con este ciclo comprobamos que en la posición que acabamos de guardar no este repetida con otra, asi los animales no se superpondrán.
+                    // Si la posición que acabamos de guardar ya existe en el array borramos la última posición del array  y restasmos uno al ciclo inicial para volver a repetir esta última iteración nuevamente.
+                    for(g in Granja) {
+                        if(v != g) {
+                            if(Granja[v][0] == Granja[g][0] && Granja[v][1] == Granja[g][1]) {
+                                Granja.pop();
+                                v--;
+                            }
+                        }
+                    }
+                }
+                // Una ves terminado de rellenar el array cambiamos el estado del juego para indicar que esta listo para jugar.
+                estado = "jugando";
+                break
+            // Este estado borra los arrays que teniamos, le suma uno a la variable nivel y genera un nuevo array con las posiciones de los animales
+            case "win":
+                borrarArray(Granja);
+                borrarArray(Ganado);
+                borrarArray(Piara);
+                // Le sumamos uno a la variable nivel.
+                nivel++;
+                aleatorioVacas = aleatorio(1, 10);
+                aleatorioCerdos = aleatorio(1, 10);
+                // Como seguimos jugando lo que hacemos es aumentar el nivel de dificultad, para eso al número aleatorio le vamos sumando la variable nivel lo que aumenta el número de vacas y cerdos que aparecerán en el tablero progresivamente
+                aleatorioVacas = aleatorioVacas + nivel;
+                aleatorioCerdos = aleatorioCerdos + nivel;
+                animales = aleatorioVacas + aleatorioCerdos + 2;
+                for (let v = 0; v < animales; v++) {
+                    let x = aleatorio(0, 12);
+                    let y = aleatorio(0, 5);
+                    Granja[v] = [x, y];
+                    for(g in Granja) {
+                        if(v != g) {
+                            if(Granja[v][0] == Granja[g][0] && Granja[v][1] == Granja[g][1]) {
+                                Granja.pop();
+                                v--;
+                            }
+                        }
+                    }
+                }
+                estado = "jugando";
+                break
+            // Esta estado borra los arrays que teniamos, resetea el nivel y genera un nuevo array con las posiciones de los animales.
+            case "lose":
+                borrarArray(Granja);
+                borrarArray(Ganado);
+                borrarArray(Piara);
+                nivel = 0;
+                aleatorioVacas = aleatorio(1, 10);
+                aleatorioCerdos = aleatorio(1, 10);
+                aleatorioVacas = aleatorioVacas + nivel;
+                aleatorioCerdos = aleatorioCerdos + nivel;
+                animales = aleatorioVacas + aleatorioCerdos + 2;
+                for (let v = 0; v < animales; v++) {
+                    let x = aleatorio(0, 12);
+                    let y = aleatorio(0, 5);
+                    Granja[v] = [x, y];
+                    for(g in Granja) {
+                        if(v != g) {
+                            if(Granja[v][0] == Granja[g][0] && Granja[v][1] == Granja[g][1]) {
+                                Granja.pop();
+                                v--;
+                            }
+                        }
+                    }
+                }
+                estado = "jugando";
+                break;
+        }
+        // Lo primero que hacemos es verificar que la imagen base está cargada, si es asi la mostramos en pantalla.
+        if(Base.cargaOK) {
+            FarmZone.drawImage(Base.objeto, -40, -105);
+        }
+        // Se verifica si la imagen Chicken esta carga, buscamos la posición que le corresponde al pollo y cargamos la imagen en dicha posición.
+        if (Chicken.cargaOK) {
+            // Para colocar los animales de manera ordenada en el tablero lo que hacemos es que la posición la multiplicamos por el ancho de la imagen.
+            Chicken.x = Granja[0][0] * anchoAnimal;
+            Chicken.y = Granja[0][1] * anchoAnimal;
+            FarmZone.drawImage(Chicken.objeto, Chicken.x, Chicken.y);
+        }
+        // Se verifica si la imagen Fox esta carga, buscamos la posición que le corresponde al pollo y cargamos la imagen en dicha posición.
+        if (Fox.cargaOK) {
+            Fox.x = Granja[1][0] * anchoAnimal;
+            Fox.y = Granja[1][1] * anchoAnimal;
+            FarmZone.drawImage(Fox.objeto, Fox.x, Fox.y);
+        }
+        if (Cow.cargaOK) {
+            // Para cargar los animales que se repiten utilizamos un ciclo que nos dira cuantas vacas tenemos que cargar.
+            for (v = 0; v < aleatorioVacas; v++) {
+                // La variable X representa la posición en el array de coordenadas, le sumamos 2 ya que las dos primeras coordenadas corresponden al pollo y al zorro, por lo que debemos empezar a utilizar las coordenadas a partir de la 2 posición del array o tercera coordenada.
+                let x = v + 2;
+                Cow.x = Granja[x][0] * anchoAnimal;
+                Cow.y = Granja[x][1] * anchoAnimal;
+                let vaquita = [Cow.x,Cow.y];
+                Ganado[v] = vaquita;
+                FarmZone.drawImage(Cow.objeto, Cow.x, Cow.y);
+            }
+        }
+        if (Pig.cargaOK) {
+            for (c = 0; c < aleatorioCerdos; c++) {
+                let x = c + 2 + aleatorioVacas;
+                Pig.x = Granja[x][0] * anchoAnimal;
+                Pig.y = Granja[x][1] * anchoAnimal;
+                let cerdito = [Pig.x,Pig.y];
+                Piara[c] = cerdito;
+                FarmZone.drawImage(Pig.objeto, Pig.x, Pig.y);
+            }
         }
     }
-    if (pollo.cargaOK) {
-        lienzo.drawImage(pollo.objeto, pollo.x, pollo.y);
-    }
-    if (cerdo.cargaOK) {
-        for (positionCerdo in piara) {
-            cerdo.x = piara[positionCerdo][0];
-            cerdo.y = piara[positionCerdo][1];
-            lienzo.drawImage(cerdo.objeto, cerdo.x, cerdo.y);
+    // Esta función determina si debemos mover el zorro o no, recibe el parámetro del evento keyup que establecimos antes.
+    function moverZorro(evento) {
+        // Establecemos el movimiento que tendrá el zorro, para ello asignamos a la variable movimiento el ancho de la imagen y declaramos las coordenadas X e Y que tiene actualmente el zorro.
+        let movimiento = anchoAnimal;
+        let x = Fox.x;
+        let y = Fox.y;
+        // Verificamos que el evento.
+        if(evento.keyCode == undefined){
+            evento = evento;
+        } else {
+            evento = evento.keyCode;
+        }
+        // Con este condicional determinamos hacia donde se moverá el zorro, según la tecla que pulsemos.
+        switch(evento) {
+            case Keys.UP:
+                // Esta condición establece que si la coordenada Y ya es 0 el zorro no puede salir de la pantalla así que no lo moverá.
+                // Si por el contrario la coordenada Y no es igual a 0 el zorro tienen espacio para moverser haca arriba, por lo que le restaremos la variable movimiento a la coordenada Y.
+                if(Fox.y == 0){
+                    Fox.y = Fox.y;
+                } else {
+                    Fox.y = y - movimiento;
+                }
+                // Una vez establecida las coordenadas de movimiento las pasamos a la función caminar.
+                caminar(x, y, x, y - movimiento, FarmZone);
+                break;
+            case Keys.DOWN:
+                // En esta otra condición verificamos si el zorro llego a bajo del todo de ser así no moveremos al zorro y mantendrá su posición.
+                // De lo contrario al igual que en el caso anterior si tienen espacio para moverse lo que tendremos que hacer es subar la variable movimiento a la coordenada Y.
+                if(Fox.y >= 300){
+                    Fox.y = Fox.y;
+                } else {
+                    Fox.y = y + movimiento;
+                }
+                caminar(x, y, x, y + movimiento, FarmZone);
+                break;
+            case Keys.LEFT:
+                // Aquí realizamos la misma operacion que con la coordenada Y pero con la coordenada X
+                if(Fox.x == 0){
+                    Fox.x = Fox.x;
+                } else {
+                    Fox.x = x - movimiento;
+                }
+                caminar(x, y, x- movimiento, y, FarmZone);
+                break;
+            case Keys.RIGHT:
+                // Aquí realizamos la misma operacion que con la coordenada Y pero con la coordenada X
+                if(Fox.x >= 820){
+                    Fox.x = Fox.x;
+                } else {
+                    Fox.x = x + movimiento;
+                }
+                caminar(x, y, x + movimiento, y, FarmZone);
+                break;
         }
     }
-    if (zorro.cargaOK) {
-        lienzo.drawImage(zorro.objeto, zorro.x, zorro.y);
-        setTimeout(comprobar, 50);
-        function comprobar() {
-            if(zorro.x == pollo.x && zorro.y == pollo.y) {
-                alert("Atrapaste al pollito");
-                estado = "win";
-                cargar();
-            } else {
-                for(i = 2; i < granja.length; i++) {
-                    var x = granja[i][0] * anchoAnimal;
-                    var y = granja[i][1] * anchoAnimal;
-                    if(zorro.x == x && zorro.y == y) {
-                        alert("No es un pollo, has perdido");
-                        estado = "lose";
-                        cargar();
+    // Creamos la función caminar, esta funció recibe como parámetro las coordenadas del zorro que establecimos en la función anterior y lo dibuja en el tablero.
+    function caminar(xi, yi, xf, yf, mapFarm) {
+        mapFarm.beginPath();
+        mapFarm.moveTo(xi, yi);
+        mapFarm.lineTo(xf, yf);
+        mapFarm.closePath();
+        // Aquí pintamos nuevamente el tablero y los animales que no han sufrido ningún movimiento.
+        if(Base.cargaOK) {
+            mapFarm.drawImage(Base.objeto, -40, -105);
+        }
+        if (Chicken.cargaOK) {
+            mapFarm.drawImage(Chicken.objeto, Chicken.x, Chicken.y);
+        }
+        if (Cow.cargaOK) {
+            for (positionVaca in Ganado) {
+                Cow.x = Ganado[positionVaca][0];
+                Cow.y = Ganado[positionVaca][1];
+                mapFarm.drawImage(Cow.objeto, Cow.x, Cow.y);
+            }
+        }
+        if (Pig.cargaOK) {
+            for (positionCerdo in Piara) {
+                Pig.x = Piara[positionCerdo][0];
+                Pig.y = Piara[positionCerdo][1];
+                mapFarm.drawImage(Pig.objeto, Pig.x, Pig.y);
+            }
+        }
+        // Una vez esta todas las piezas del tablero en su sitio pasamos a pintar a zorro en su nueva posición.
+        if (Fox.cargaOK) {
+            mapFarm.drawImage(Fox.objeto, Fox.x, Fox.y);
+            // Tras pintar al zorro comprobamos si en la nueva posición esta el pollo o algun otro animal, con la función comprobar.
+            setTimeout(comprobar, 50);
+            // Creamos la función comprobar.
+            function comprobar() {
+                // Este condicional comprueba si el pollo y el zorro están en la misma posición, si es así lanza una alerta para indicar que se atrapo al pollo, cambia el estado a "WIN" y llama a la función cargar para seguir con el juego.
+                // Si el pollo y el zorro no estan en la misma posición comprueba si la posición del zorro coincide con la cualquier otro animal que tengamos cargado, de ser así lanza una alerta para indicar que el animal no es un pollo y que ha perdido, cambia el estado a "LOSE" y llama nuevamente a la función cargar para empezar de nuevo.
+                // Si ninguna de las dos codiciones se cumple puede seguir moviendo al zorro a una nueva posición
+                if(Fox.x == Chicken.x && Fox.y == Chicken.y) {
+                    alert("Atrapaste al pollito");
+                    estado = "win";
+                    cargar();
+                } else {
+                    for(i = 2; i < Granja.length; i++) {
+                        var x = Granja[i][0] * anchoAnimal;
+                        var y = Granja[i][1] * anchoAnimal;
+                        if(Fox.x == x && Fox.y == y) {
+                            alert("No es un pollo, has perdido");
+                            estado = "lose";
+                            cargar();
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
-/**
- * Estas son funciones genericas que se utilizan para que el codigo pueda realizar algunas acciones.
- *
- * Estas funcionaes bloquean el scroll mientras realizamos los movimientos del zorrito y lo vuelven a
- * habilitar una vez movido.
- */
-var botonGo = document.getElementById("btnEmpezar");
-var botonStop = document.getElementById("btnStop");
-botonGo.addEventListener("click", empezamos);
-botonStop.addEventListener("click", pausar);
-function empezamos() {
-    hideOrNot(botonGo);
-    hideOrNot(botonStop);
-    disableScroll();
-}
-function pausar() {
-    hideOrNot(botonGo);
-    hideOrNot(botonStop);
-    enableScroll();
-}
-
-
-// Funcion basica que genera numeros aleatorios con los parametros que le damos
+// Estas funcionas nos sirven de apoyo para poder realizar algunas tareas en el código.
 function aleatorio(min, max) {
     var resultado = Math.floor(Math.random() * (max - min + 1)) + min;
     return resultado;
 }
-
 function borrarArray(array) {
     for (var x = array.length; x > 0; x--) {
         array.pop();
     }
-}
-
-function disableScroll(){
-    document.getElementsByTagName("html")[0].style.overflow = "hidden";
-}
-function enableScroll(){
-    document.getElementsByTagName("html")[0].style.overflow = "auto";
-}
-
-function hideOrNot(etiqueta) {
-    etiqueta.classList.contains("hide") ? etiqueta.classList.remove("hide") : etiqueta.classList.add("hide");
 }
