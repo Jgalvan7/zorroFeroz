@@ -28,7 +28,9 @@ MIT
 
 ## INSTALACIÓN
 Puedes descargar los archivos desde Github directamente o clonar el repositorio.
+
 URL de Descarga: https://github.com/Jgalvan7/zorroFeroz.git
+
 Clonar erpositorio: $ git clone https://github.com/Jgalvan7/zorroFeroz.git
 
 
@@ -67,7 +69,9 @@ Se ha eliminado la funcionalidad de jugar en tablet o móvil por el momento ya q
 **Puntos importantes.**
 
 1.- HTML: Como se ha indicado se ha limpiado el documento de HTML dejando solo el section corespondiante al proyecto.
+
 2.- CSS: Se crea un nuevo archivo para dar estilos al section donde se cargará todo el contenido y el los elementos de HTML que generaremos con JS.
+
 3.- JS: Se han cambiado algunas declaraciones de variables ya que todas estaban con var y se pasan a let o const según corresponda, ahora se genran elemantos HTML desde JS para dar interactividad al juego.
 
 
