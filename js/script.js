@@ -1,64 +1,104 @@
+import { ElementoHTML } from "./modules/clases.mjs"
 // Accedemos al section donde se cargará el juego y declaramos las variables de la imagen inicial y el botón jugar.
 const ModuleGame = document.getElementById("game");
 const ImageStart = "./assets/zorroFeroz.jpg";
 const BtnStart = "./assets/boton__play.png";
 const BtnStart2 = "./assets/boton__play2.png";
 // Creamos un elemento imagen y lo agregamos al módulo.
-const LaunchImg = document.createElement("img");
-LaunchImg.setAttribute("src",ImageStart);
-LaunchImg.setAttribute("id", "imgLaunch");
-ModuleGame.appendChild(LaunchImg);
+const LaunchImg = new ElementoHTML({
+    element: "img",
+    id: "imgLaunch",
+    parent: "game",
+    src: ImageStart
+});
+LaunchImg.agregarImagen();
 // Creamos un elemento botón y lo agregamos al módulo, este será el que abra el menú de juego.
-const LaunchBtn = document.createElement("button");
-LaunchBtn.setAttribute("class","moduloZorroFeroz__start");
-LaunchBtn.setAttribute("id", "btnStart");
-ModuleGame.appendChild(LaunchBtn);
+const LaunchBtn = new ElementoHTML({
+    element: "button",
+    clase: "moduloZorroFeroz__start",
+    id: "btnStart",
+    parent: "game"
+});
+LaunchBtn.agregarBoton();
 // Creamos un elemento que contendra la imagen del botón jugar que definimos antes.
-const LaunchBtnImg = document.createElement("img");
-LaunchBtnImg.setAttribute("src",BtnStart);
-LaunchBtn.appendChild(LaunchBtnImg);
+let LaunchBtnImg = new ElementoHTML({
+    element: "img",
+    id: "imgBtnStart",
+    parent: "btnStart",
+    src: BtnStart
+});
+LaunchBtnImg.agregarImagen();
 // Accedemos al botón mediante su ID y le asignamis un par de escuchas para darle interactividad.
 const BtnGame = document.getElementById("btnStart");
 BtnGame.addEventListener("mouseenter", function(){
-    LaunchBtnImg.setAttribute("src",BtnStart2);
+    LaunchBtnImg.eliminar();
+    LaunchBtnImg = new ElementoHTML({
+        element: "img",
+        id: "imgBtnStart",
+        parent: "btnStart",
+        src: BtnStart2
+    });
+    LaunchBtnImg.agregarImagen();
+    let startMenu = document.getElementById("imgBtnStart");
+    startMenu.addEventListener("click", lauchStart);
 });
 BtnGame.addEventListener("mouseout", function(){
-    LaunchBtnImg.setAttribute("src",BtnStart);
+    LaunchBtnImg.eliminar();
+    LaunchBtnImg = new ElementoHTML({
+        element: "img",
+        id: "imgBtnStart",
+        parent: "btnStart",
+        src: BtnStart
+    });
+    LaunchBtnImg.agregarImagen();
 });
 // Asignamos la escucha para el evento click.
 BtnGame.addEventListener("click", lauchStart);
 // Creamos la funcion que mostrará el menú del juego.
 function lauchStart() {
     // Eliminamos el botón de jugar.
-    ModuleGame.removeChild(LaunchBtn);
+    LaunchBtn.eliminar();
     // Creamos un elemento div que contendrá el menú del juego.
-    const GameMenu = document.createElement("div");
-    GameMenu.setAttribute("class", "moduloZorroFeroz__gameMenu");
-    ModuleGame.appendChild(GameMenu);
+    const GameMenu = new ElementoHTML({
+        element: "div",
+        clase: "moduloZorroFeroz__gameMenu",
+        id: "contenedorMenu",
+        parent: "game"
+    });
+    GameMenu.agregarContenedor();
     // Creamos el botón para iniciar el juego y le insertamos el texto "Nuevo Juego".
-    const BtnNewGame = document.createElement("button");
-    BtnNewGame.setAttribute("id", "btnNewGame");
-    GameMenu.appendChild(BtnNewGame);
+    const BtnNewGame = new ElementoHTML({
+        element: "button",
+        id: "btnNewGame",
+        parent: "contenedorMenu"
+    });
+    BtnNewGame.agregarBoton();
     const TextBtnNewGame = document.getElementById("btnNewGame");
     TextBtnNewGame.innerText= "Nuevo Juego";
     // Creamos el botón para salir del juego y le insertamos el texto "Salir del Juego".
-    const BtnExit = document.createElement("button");
-    BtnExit.setAttribute("id", "btnExit");
-    GameMenu.appendChild(BtnExit);
+    const BtnExit = new ElementoHTML({
+        element: "button",
+        id: "btnExit",
+        parent: "contenedorMenu"
+    });
+    BtnExit.agregarBoton();
     const TextBtnExit = document.getElementById("btnExit");
     TextBtnExit.innerText= "Salir del Juego";
     // Le damos la funcionalidad al botón Nuevo Juego mediante la escucha del evento click.
     // Al darle al botón este eliminará el div que muestra el menú y la imagen principal.
     TextBtnNewGame.addEventListener("click", function() {
-        ModuleGame.removeChild(GameMenu);
-        ModuleGame.removeChild(LaunchImg);
+        GameMenu.eliminar();
+        LaunchImg.eliminar();
         // Creamos un elemento imagen que será el fondo del juego y lo cargamos en pantalla con las dimensiones correspondientes.
-        const BaseGame = document.createElement("img");
-        BaseGame.setAttribute("class", "moduloZorroFeroz__game");
-        BaseGame.setAttribute("src", "./assets/farm.png");
-        BaseGame.setAttribute("width", "1000px");
-        BaseGame.setAttribute("height", "600px");
-        ModuleGame.appendChild(BaseGame);
+        const BaseGame = new ElementoHTML({
+            element: "img",
+            clase: "moduloZorroFeroz__game",
+            parent: "game",
+            src: "./assets/farm.png",
+            width: "1000px",
+            height: "600px"
+        });
+        BaseGame.agregarImagen();
         // Cargamos la función que inicia la partida.
         startGame();
     });
@@ -68,12 +108,15 @@ function lauchStart() {
 // Creamos la función que iniciará la partida.
 function startGame() {
     // Creamos el canvas donde se desarrollará el juego y lo cargamos.
-    const GameZone = document.createElement("canvas");
-    GameZone.setAttribute("class", "moduloZorroFeroz__gameZone");
-    GameZone.setAttribute("id", "foxFoxy");
-    GameZone.setAttribute("width", "960px");
-    GameZone.setAttribute("height", "440px");
-    ModuleGame.appendChild(GameZone);
+    const GameZone = new ElementoHTML({
+        element: "canvas",
+        clase: "moduloZorroFeroz__gameZone",
+        id: "foxFoxy",
+        parent: "game",
+        width: "960px",
+        height: "440px"
+    });
+    GameZone.agregarCanvas();
     // Asignamos el canvas a una variable y le pasamos el contexto que tendrá el dibujo.
     const Farm = document.getElementById("foxFoxy");
     const FarmZone = Farm.getContext("2d");
@@ -95,39 +138,35 @@ function startGame() {
     // Creamos la instancia de las imáganes y las pasamos para su carga.
     Base.objeto = new Image();
     Base.objeto.src = Base.url;
-    Base.objeto.addEventListener("load", loadBase);
     Fox.objeto = new Image();
     Fox.objeto.src = Fox.url;
-    Fox.objeto.addEventListener("load", loadFox);
     Chicken.objeto = new Image();
     Chicken.objeto.src = Chicken.url;
-    Chicken.objeto.addEventListener("load", loadChicken);
     Cow.objeto = new Image();
     Cow.objeto.src = Cow.url;
-    Cow.objeto.addEventListener("load", loadCow);
     Pig.objeto = new Image();
     Pig.objeto.src = Pig.url;
-    Pig.objeto.addEventListener("load", loadPig);
+    Pig.objeto.addEventListener("load", loading);
     // Cargamos las imágenes y llamamos a la funciona cargar que se encargará de crear la disposición que tendrán los animales en el tablero de juego.
-    function loadBase() {
-        Base.cargaOK = true;
-        cargar();
-    }
-    function loadFox() {
-        Fox.cargaOK = true;
-        cargar();
-    }
-    function loadChicken() {
-        Chicken.cargaOK = true;
-        cargar();
-    }
-    function loadCow() {
-        Cow.cargaOK = true;
-        cargar();
-    }
-    function loadPig() {
-        Pig.cargaOK = true;
-        cargar();
+    function loading() {
+        if(Base.cargaOK == false) {
+            Base.cargaOK = true;
+        }
+        if(Fox.cargaOK == false) {
+            Fox.cargaOK = true;
+        }
+        if(Chicken.cargaOK == false) {
+            Chicken.cargaOK = true;
+        }
+        if(Cow.cargaOK == false) {
+            Cow.cargaOK = true;
+        }
+        if(Pig.cargaOK == false) {
+            Pig.cargaOK = true;
+        }
+        if(Base.cargaOK == true && Fox.cargaOK == true && Chicken.cargaOK == true && Cow.cargaOK == true && Pig.cargaOK == true) {
+            cargar();
+        }
     }
     // Añadimos una escuhca al document para saber cuando se pulsa una tecla y pasamos el evento keyup a la función para saber si debemos mover el zorro o no.
     document.addEventListener("keyup", moverZorro);
@@ -155,7 +194,7 @@ function startGame() {
                     Granja[v] = [x, y];
                     // Con este ciclo comprobamos que en la posición que acabamos de guardar no este repetida con otra, asi los animales no se superpondrán.
                     // Si la posición que acabamos de guardar ya existe en el array borramos la última posición del array  y restasmos uno al ciclo inicial para volver a repetir esta última iteración nuevamente.
-                    for(g in Granja) {
+                    for(let g in Granja) {
                         if(v != g) {
                             if(Granja[v][0] == Granja[g][0] && Granja[v][1] == Granja[g][1]) {
                                 Granja.pop();
@@ -184,7 +223,7 @@ function startGame() {
                     let x = aleatorio(0, 12);
                     let y = aleatorio(0, 5);
                     Granja[v] = [x, y];
-                    for(g in Granja) {
+                    for(let g in Granja) {
                         if(v != g) {
                             if(Granja[v][0] == Granja[g][0] && Granja[v][1] == Granja[g][1]) {
                                 Granja.pop();
@@ -210,7 +249,7 @@ function startGame() {
                     let x = aleatorio(0, 12);
                     let y = aleatorio(0, 5);
                     Granja[v] = [x, y];
-                    for(g in Granja) {
+                    for(let g in Granja) {
                         if(v != g) {
                             if(Granja[v][0] == Granja[g][0] && Granja[v][1] == Granja[g][1]) {
                                 Granja.pop();
@@ -241,7 +280,7 @@ function startGame() {
         }
         if (Cow.cargaOK) {
             // Para cargar los animales que se repiten utilizamos un ciclo que nos dira cuantas vacas tenemos que cargar.
-            for (v = 0; v < aleatorioVacas; v++) {
+            for (let v = 0; v < aleatorioVacas; v++) {
                 // La variable X representa la posición en el array de coordenadas, le sumamos 2 ya que las dos primeras coordenadas corresponden al pollo y al zorro, por lo que debemos empezar a utilizar las coordenadas a partir de la 2 posición del array o tercera coordenada.
                 let x = v + 2;
                 Cow.x = Granja[x][0] * anchoAnimal;
@@ -252,7 +291,7 @@ function startGame() {
             }
         }
         if (Pig.cargaOK) {
-            for (c = 0; c < aleatorioCerdos; c++) {
+            for (let c = 0; c < aleatorioCerdos; c++) {
                 let x = c + 2 + aleatorioVacas;
                 Pig.x = Granja[x][0] * anchoAnimal;
                 Pig.y = Granja[x][1] * anchoAnimal;
@@ -331,14 +370,14 @@ function startGame() {
             mapFarm.drawImage(Chicken.objeto, Chicken.x, Chicken.y);
         }
         if (Cow.cargaOK) {
-            for (positionVaca in Ganado) {
+            for (let positionVaca in Ganado) {
                 Cow.x = Ganado[positionVaca][0];
                 Cow.y = Ganado[positionVaca][1];
                 mapFarm.drawImage(Cow.objeto, Cow.x, Cow.y);
             }
         }
         if (Pig.cargaOK) {
-            for (positionCerdo in Piara) {
+            for (let positionCerdo in Piara) {
                 Pig.x = Piara[positionCerdo][0];
                 Pig.y = Piara[positionCerdo][1];
                 mapFarm.drawImage(Pig.objeto, Pig.x, Pig.y);
@@ -359,7 +398,7 @@ function startGame() {
                     estado = "win";
                     cargar();
                 } else {
-                    for(i = 2; i < Granja.length; i++) {
+                    for(let i = 2; i < Granja.length; i++) {
                         var x = Granja[i][0] * anchoAnimal;
                         var y = Granja[i][1] * anchoAnimal;
                         if(Fox.x == x && Fox.y == y) {

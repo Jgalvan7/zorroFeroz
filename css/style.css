@@ -24,9 +24,11 @@ body {
     left: calc(50% - (270px/2));
     border: none;
     background: none;
+    z-index: 10;
 }
 .moduloZorroFeroz__start img {
     position: relative;
+    z-index: -1;
 }
 .moduloZorroFeroz__gameMenu {
     position: relative;
