@@ -2,12 +2,9 @@ extend components/templates.pug
 block contenido
     section.miniHeroCover
         .miniHeroCover__imagen
-            img(src="../assets/images/project__khronos.png", alt="Imagen de una persona frente a engranajes de reloj")
+            img(src="../assets/images/zorroFeroz.jpg", alt="Imagen de un zorro frente delante de una granja")
         .miniHeroCover__contenido
             h2 Zorro Feroz
-    section(class="moduloZorro" id="projectFox3")
-        div(class="moduloZorro__imagen" id="cargarJuego")
-            img(src="./assets/images/project__zorroFeroz.jpg" alt="Portada del juego Zorro Feroz")
     section.moduloProject
         .moduloProject__description
             p Este proyecto es un pequeño juego online que desarrolle cuando emprece a aprender sobre Javascript, tras varias clases estuve experimentando un poco y se me ocurrio la idea de realizar un juego para mi hijo de 5 años.
@@ -26,3 +23,9 @@ block contenido
             p Licencia: MIT
             p Repositorio: </br>
                 a(href="https://github.com/Jgalvan7/zorroFeroz.git") Repositorio Guthub
+    section.moduloZorro#projectFox3
+        .moduloZorro__imagen#cargarJuego
+            img(src="../assets/images/zorroFeroz.jpg", alt="Portada del juego Zorro Feroz")
+            button#loadScreen
+                img(src="../assets/images/boton__play.png", alt="Botón para jugar")
+    script(src="../js/zorroFeroz.js")

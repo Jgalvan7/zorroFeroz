@@ -1,0 +1,64 @@
+.moduloProject {
+    width: 100%;
+    &__description {
+        width: 100%;
+        padding: 0 10px;
+        text-align: justify;
+    }
+    &__file {
+        width: 100%;
+        padding: 0 10px;
+        h3 {
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 0;
+        }
+    }
+    @include media(tablet) {
+        display: flex;
+        flex-direction: row;
+        align-items:flex-start;
+        max-width: 1000px;
+        margin: 40px auto 10px;
+        &__description {
+            width: 70%;
+            padding: 0 20px;
+            text-align: justify;
+        }
+        &__file {
+            width: 30%;
+            padding: 15px;
+            border-radius: 5px;
+            @include degradados(35deg,$color-secundario,0%,$color-primario,80%);
+            @include shadows(#000, 0.9);
+        }
+    }
+}
+.moduloZorro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 350px;
+    max-height: 150px;
+    margin: 20px auto 50px;
+    overflow: hidden;
+    border-radius: 10px;
+    &__imagen {
+        position: relative;
+        img {
+            object-fit: cover;
+            width: 100%;
+        }
+        button {
+            position: absolute;
+            top: 35px;
+            left: 55px;
+            width: 250px;
+            height: 150px;
+            background: none;
+            border: none;
+        }
+    }
+}
