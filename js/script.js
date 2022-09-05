@@ -1,9 +1,9 @@
 import { ElementoHTML } from "./modules/clases.mjs"
 // Accedemos al section donde se cargará el juego y declaramos las variables de la imagen inicial y el botón jugar.
 const ModuleGame = document.getElementById("game");
-const ImageStart = "./assets/zorroFeroz.jpg";
-const BtnStart = "./assets/boton__play.png";
-const BtnStart2 = "./assets/boton__play2.png";
+const ImageStart = "../assets/images/zorroFeroz.jpg";
+const BtnStart = "../assets/images/boton__play.png";
+const BtnStart2 = "../assets/images/boton__play2.png";
 // Creamos un elemento imagen y lo agregamos al módulo.
 const LaunchImg = new ElementoHTML({
     element: "img",
