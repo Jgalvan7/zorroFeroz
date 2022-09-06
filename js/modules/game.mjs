@@ -1,4 +1,5 @@
 import { ElementoHTML } from "./clases.mjs";
+import { contenedorMarcador, marcadorLife } from "./marcador.mjs";
 import { aleatorio, rellenoArray, borrarArray } from "./helpers.mjs";
 
 export function gameToPlay () {
@@ -16,6 +17,8 @@ export function gameToPlay () {
         height: "600px"
     });
     BaseGame.agregarImagen();
+    // Cargamos el marcador de la partida
+    contenedorMarcador();
     // Cargamos la función que inicia la partida.
     startGame();
 }
@@ -44,8 +47,10 @@ function startGame() {
     let Granja = [];
     let Ganado = [];
     let Piara = [];
+    let Life = 5;
+    let Points = 0;
     // Declaramos las variables que contendrán las imágenes que usaremos para el juego.
-    let Base = { url: "../assets/icons/farm.png", cargaOK: false }
+    let Base = { url: "../assets/icons/farm.png", cargaOK: false };
     let Fox = { url: "../assets/icons/zorro.png", cargaOK: false };
     let Chicken = { url: "../assets/icons/pollo.png", cargaOK: false };
     let Cow = { url: "../assets/icons/vaca.png", cargaOK: false };
@@ -91,7 +96,10 @@ function startGame() {
 
             // Este estado carga el primer mapa y genera los arrays que contendrán las posiciones.
             case "inicial":
+                // Establecemos el nivel inicial
                 nivel = 0;
+                // Agregamos el numero de vidas que tendra el zorrito
+                marcadorLife(Life);
                 // Creamos un número aleatorio de vacas y se lo asignamos a una variable.
                 aleatorioVacas = aleatorio(1, 10);
                 // Creamos un número aleatorio de cerdos y se lo asignamos a una variable.
@@ -127,13 +135,13 @@ function startGame() {
                 borrarArray(Granja);
                 borrarArray(Ganado);
                 borrarArray(Piara);
-                nivel = 0;
                 aleatorioVacas = aleatorio(1, 10);
                 aleatorioCerdos = aleatorio(1, 10);
                 aleatorioVacas = aleatorioVacas + nivel;
                 aleatorioCerdos = aleatorioCerdos + nivel;
                 animales = aleatorioVacas + aleatorioCerdos + 2;
                 rellenoArray(animales,Granja);
+                marcadorLife(Life);
                 estado = "jugando";
                 break;
         }
@@ -284,6 +292,11 @@ function startGame() {
                         if(Fox.x == x && Fox.y == y) {
                             alert("No es un pollo, has perdido");
                             estado = "lose";
+                            if(Life != 0) {
+                                Life -= 1;
+                            } else {
+                                nivel = 0;
+                            }
                             cargar();
                         }
                     }

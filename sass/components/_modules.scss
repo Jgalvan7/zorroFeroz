@@ -113,6 +113,27 @@
             }
         }
     }
+    &__gameMarcador {
+        position: absolute;
+        display: flex;
+        justify-content: space-around;
+        width: 90%;
+        height: 70px;
+        z-index: 10;
+        &--life {
+            display: flex;
+            width: 300px;
+            height: 60px;
+            img {
+                width: 60px;
+            }
+        }
+        &--point {
+            width: 300px;
+            height: 60px;
+            background-color: aqua;
+        }
+    }
     &__gameZone {
         position: relative;
         top: 105px;
@@ -121,4 +142,8 @@
         max-width: 960px;
         max-height: 440px;
     }
+}
+
+.foxFace {
+    object-fit: cover;
 }
