@@ -91,5 +91,5 @@ function lauchStart() {
     // Al darle al botón este eliminará el div que muestra el menú y la imagen principal.
     TextBtnNewGame.addEventListener("click", gameToPlay);
     // Le damos funcionalidad al botón Salir del Juego, el cual al darle click recargará la página.
-    TextBtnExit.addEventListener("click", _ => { location.reload() });
+    TextBtnExit.addEventListener("click", () => { location.href="./index.html" });
 }

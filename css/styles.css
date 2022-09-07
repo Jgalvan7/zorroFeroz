@@ -736,6 +736,8 @@ a:hover {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
   max-width: 350px;
   height: 200px;
   margin: 0 auto;
@@ -748,6 +750,7 @@ a:hover {
 }
 .moduloZorroFeroz__gameMenu button {
   font-size: 34px;
+  font-weight: bold;
   font-family: "Chewy", cursive;
   border: none;
   background: none;
