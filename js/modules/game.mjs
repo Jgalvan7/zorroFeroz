@@ -1,5 +1,6 @@
 import { ElementoHTML } from "./clases.mjs";
 import { contenedorMarcador, marcadorLife, marcadorPoint } from "./marcador.mjs";
+import { message } from "./messages.mjs";
 import { aleatorio, rellenoArray, borrarArray } from "./helpers.mjs";
 
 export function gameToPlay () {
@@ -288,8 +289,9 @@ function startGame() {
                 // Si el pollo y el zorro no estan en la misma posición comprueba si la posición del zorro coincide con la cualquier otro animal que tengamos cargado, de ser así lanza una alerta para indicar que el animal no es un pollo y que ha perdido, cambia el estado a "LOSE" y llama nuevamente a la función cargar para empezar de nuevo.
                 // Si ninguna de las dos codiciones se cumple puede seguir moviendo al zorro a una nueva posición
                 if(Fox.x == Chicken.x && Fox.y == Chicken.y) {
-                    alert("Atrapaste al pollito");
+                    //alert("Atrapaste al pollito");
                     estado = "win";
+                    message(estado);
                     cargar();
                 } else {
                     for(let i = 2; i < Granja.length; i++) {
@@ -298,15 +300,16 @@ function startGame() {
                         if(Fox.x == x && Fox.y == y) {
                             Life -= 1;
                             if(Life != 0) {
-                                alert("No es un pollo, has perdido");
+                                //alert("No es un pollo, has perdido");
                                 estado = "lose";
+                                message(estado);
                                 cargar();
                             } else {
-                                alert("No es un pollo, has perdido y no te quedan vidas, vuelve a empezar.");
+                                //alert("No es un pollo, has perdido y no te quedan vidas, vuelve a empezar.");
                                 estado = "inicial";
                                 nivel = 0;
                                 marcadorPoint(-1);
-                                location.reload();
+                                message(estado);
                             }
                             //cargar();
                         }
