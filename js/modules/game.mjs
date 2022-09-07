@@ -1,5 +1,5 @@
 import { ElementoHTML } from "./clases.mjs";
-import { contenedorMarcador, marcadorLife } from "./marcador.mjs";
+import { contenedorMarcador, marcadorLife, marcadorPoint } from "./marcador.mjs";
 import { aleatorio, rellenoArray, borrarArray } from "./helpers.mjs";
 
 export function gameToPlay () {
@@ -40,7 +40,7 @@ function startGame() {
     const FarmZone = Farm.getContext("2d");
     // Inicializamos las variables que nos hacen falta para el juego y declaramos las teclas que se usarán para jugar, el estado inicial del juego y el ancho que tendrán los animales.
     const Keys = {UP: 38, DOWN: 40, LEFT: 37, RIGHT: 39};
-    let aleatorioVacas, aleatorioCerdos, animales, nivel;
+    let aleatorioVacas, aleatorioCerdos, animales, nivel, points;
     //let xStart, xEnd, yStart, yEnd, walking;
     let estado = "inicial";
     const anchoAnimal = 70;
@@ -48,7 +48,6 @@ function startGame() {
     let Ganado = [];
     let Piara = [];
     let Life = 5;
-    let Points = 0;
     // Declaramos las variables que contendrán las imágenes que usaremos para el juego.
     let Base = { url: "../assets/icons/farm.png", cargaOK: false };
     let Fox = { url: "../assets/icons/zorro.png", cargaOK: false };
@@ -98,8 +97,11 @@ function startGame() {
             case "inicial":
                 // Establecemos el nivel inicial
                 nivel = 0;
-                // Agregamos el numero de vidas que tendra el zorrito
+                // Agregamos el número de vidas que tendrá el zorrito
                 marcadorLife(Life);
+                // Agregamos el marcador de puntos
+                points = 0;
+                marcadorPoint(points);
                 // Creamos un número aleatorio de vacas y se lo asignamos a una variable.
                 aleatorioVacas = aleatorio(1, 10);
                 // Creamos un número aleatorio de cerdos y se lo asignamos a una variable.
@@ -119,6 +121,9 @@ function startGame() {
                 borrarArray(Piara);
                 // Le sumamos uno a la variable nivel.
                 nivel++;
+                // Acumulamos los puntos obtenidos en el marcador
+                points = 5;
+                marcadorPoint(points);
                 // Generamos nuevamente un número aleatorio de vacas y cerdos
                 aleatorioVacas = aleatorio(1, 10);
                 aleatorioCerdos = aleatorio(1, 10);
@@ -141,6 +146,7 @@ function startGame() {
                 aleatorioCerdos = aleatorioCerdos + nivel;
                 animales = aleatorioVacas + aleatorioCerdos + 2;
                 rellenoArray(animales,Granja);
+                // Cargamos nuevamente el marcador de vidas con las vidas restantes
                 marcadorLife(Life);
                 estado = "jugando";
                 break;
@@ -290,14 +296,19 @@ function startGame() {
                         var x = Granja[i][0] * anchoAnimal;
                         var y = Granja[i][1] * anchoAnimal;
                         if(Fox.x == x && Fox.y == y) {
-                            alert("No es un pollo, has perdido");
-                            estado = "lose";
+                            Life -= 1;
                             if(Life != 0) {
-                                Life -= 1;
+                                alert("No es un pollo, has perdido");
+                                estado = "lose";
+                                cargar();
                             } else {
+                                alert("No es un pollo, has perdido y no te quedan vidas, vuelve a empezar.");
+                                estado = "inicial";
                                 nivel = 0;
+                                marcadorPoint(-1);
+                                location.reload();
                             }
-                            cargar();
+                            //cargar();
                         }
                     }
                 }

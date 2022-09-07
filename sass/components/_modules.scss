@@ -129,9 +129,14 @@
             }
         }
         &--point {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
             width: 300px;
             height: 60px;
-            background-color: aqua;
+            font-weight: bold;
+            color: $color-claro;
+            @include font-size(40px);
         }
     }
     &__gameZone {

@@ -777,9 +777,22 @@ a:hover {
   width: 60px;
 }
 .moduloZorroFeroz__gameMarcador--point {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: 300px;
   height: 60px;
-  background-color: aqua;
+  font-weight: bold;
+  color: #ebebeb;
+  font-size: 40px;
+  font-size: 2.5rem;
+  line-height: 3.75rem;
 }
 .moduloZorroFeroz__gameZone {
   position: relative;

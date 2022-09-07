@@ -10,27 +10,27 @@ export function contenedorMarcador() {
     GameMarcador.agregarContenedor();
 
     // Agregamos el contendedor de las vidas del zorrito
-    const marcadorLife = new ElementoHTML({
+    const marcadorLifes = new ElementoHTML({
         element: "div",
         clase: "moduloZorroFeroz__gameMarcador--life",
         id: "marcadorLife",
         parent: "contenedorMarcador"
     });
-    marcadorLife.agregarContenedor();
+    marcadorLifes.agregarContenedor();
 
     // Agregamos el contendedor de los puntos conseguidos
     const marcadorPoints = new ElementoHTML({
         element: "div",
         clase: "moduloZorroFeroz__gameMarcador--point",
-        id: "marcadorLife",
+        id: "marcadorPoint",
         parent: "contenedorMarcador"
     });
     marcadorPoints.agregarContenedor();
 }
 
 export function marcadorLife(vidas) {
-    const contenedorLife = document.getElementById("marcadorLife");
-    contenedorLife.textContent = "";
+    const contenedorLifes = document.getElementById("marcadorLife");
+    contenedorLifes.textContent = "";
     let ordenLife = 0;
     for (let v = 0; v < vidas; v++) {
         let foxLife = { url: "../assets/icons/zorroFace.png", id: v };
@@ -38,7 +38,7 @@ export function marcadorLife(vidas) {
         foxLife.objeto.src = foxLife.url;
         foxLife.objeto.id = foxLife.id;
         foxLife.objeto.addEventListener("load", () =>{
-            contenedorLife.append(foxLife.objeto);
+            contenedorLifes.append(foxLife.objeto);
         });
         if(v != 0) {
             ordenLife += 60;
@@ -46,4 +46,20 @@ export function marcadorLife(vidas) {
         foxLife.objeto.style.position = "relative";
         foxLife.objeto.style.left = ordenLife;
     }
+}
+
+let acumulado = 0;
+export function marcadorPoint(point) {
+    let marcador = 0;
+    const contenedorPoint = document.getElementById("marcadorPoint");
+    if(point != 0) {
+        acumulado = acumulado + point;
+        marcador = acumulado;
+    }
+    if(point < 0) {
+        marcador = 0;
+        acumulado = 0;
+    }
+    //console.log(point, acumulado, marcador);
+    contenedorPoint.textContent = marcador;
 }
